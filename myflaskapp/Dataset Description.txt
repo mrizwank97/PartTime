@@ -1,0 +1,27 @@
+**dengColombo**
+\format{A data frame with 279 rows and 12 variables
+\describe{
+\item{Cases}{Total number of notified dengue cases}
+\item{Year}{Year}
+\item{Week}{Week number to locate the week within a year}
+\item{TEM}{average temperature of the week(Celcius)}
+\item{TMAX}{maximum temperature of the week (Celcius)}
+\item{Tm}{minimum temperature of the week (Celcius)}
+\item{SLP}{Sea level pressure(hPa)}
+\item{H}{Relative humidity (\%)}
+\item{PP}{Precipitation amount (mm)}
+\item{VV}{Mean visibility (km)}
+\item{V}{Mean wind speed (km/h)}
+\item{VM}{Maximum sustained wind speed (Km/h)}
+}}
+
+**population**
+\annual population count of the selected area
+
+
+**vegincies-col**
+\Vegetation indices
+are calculated for different MOHs separately from 2013 
+ using MOD13Q1 data set provided by NASA Land Data
+Products and Services.
+VEG1- veg indices
