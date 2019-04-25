@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+{% block body %}
+  <h1>Welcome, <small>{{session.username}}</small></h1>
+
+
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container" style="padding-top:50px">
+	<form action="http://localhost:5000/result" method = "POST"
+      enctype="multipart/form-data">
+    <fieldset>
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="row">
+                <label class="control-label col-md-2 text-right" ><span>Select the CSV file</span></label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="hidden">
+                        <input type="file" name="file" class="form-control form-control-sm" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        <div class="input-group-btn">
+                            <input type="submit" value="Upload" class="rounded-0 btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>                        
+        </div>
+    </fieldset>    
+</form>
+</div>
+
+{% endblock %}
