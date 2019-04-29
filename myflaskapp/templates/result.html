@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+{% block body %}
+  <h1>Welcome, <small>{{session.username}}</small></h1>
+	<h4>Following table represent the predicted results on your input data. Click on view reports in navbar to have a look at different visualizations.<h4>
+	<table style="text-align:center" border="1px solid black" width="50%">
+	<tr>
+		<th>Entry</th>
+		<th>Predictions</th>
+	</tr>
+	{% for i in range(data|length) %}
+		<tr>
+			<td>{{i+1}}</td>
+			<td>{{data[i]}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}

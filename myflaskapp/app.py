@@ -1,20 +1,23 @@
-from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
-from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
-from passlib.hash import sha256_crypt
-from functools import wraps
-from werkzeug import secure_filename
-import pickle
 import io
+import os
+import pickle
 import random
-from flask import Response
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
+from os import listdir
+from flask import Response
+from functools import wraps
+from flask_mysqldb import MySQL
 import matplotlib.pyplot as plt
+from os.path import isfile, join
 from sklearn import model_selection
+from werkzeug import secure_filename
+from matplotlib.figure import Figure
+from passlib.hash import sha256_crypt
 from sklearn.metrics import accuracy_score
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 
 app = Flask(__name__)
     
@@ -24,10 +27,9 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '1234'
 app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
 # init MYSQL
 mysql = MySQL(app)
-
-#Articles = Articles()
 
 # Index
 @app.route('/')
@@ -39,6 +41,16 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+#view_reports
+@app.route('/view_reports')
+def view_reports():
+    mypath = os.getcwd() + "\static"
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    #for i in range(len(onlyfiles)):
+     #   onlyfiles[i] = mypath+"\\" + onlyfiles[i]
+      #  onlyfiles[i] = onlyfiles[i].replace('\\','/')
+    return render_template('view_reports.html', plots = onlyfiles)
 
 # Register Form Class
 class RegisterForm(Form):
@@ -137,36 +149,30 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
-
+#file uploading
 @app.route('/file_upload')
 @is_logged_in
 def file_upload():
     return render_template('file_upload.html')
 
+#result page
 @app.route('/result', methods = ['GET', 'POST'])
 def result():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save(secure_filename(f.filename))
-      fig = create_figure(f.filename)
-      output = io.BytesIO()
-      FigureCanvas(fig).print_png(output)
-      return Response(output.getvalue(), mimetype='image/png')
-
-
-def create_figure(file):
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    features = pd.read_csv(file)
-    for i in features.columns:
-        df = features[i]
-        mean = df[df != 0].mean()
-        df[df == 0] = mean
-    loaded_model = pickle.load(open("dengue-weights.dat", "rb"))
-    y_pred = loaded_model.predict(features)
-    predictions = [round(value) for value in y_pred]
-    axis.plot(np.exp(predictions))
-    return fig
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(secure_filename(f.filename))
+        features = pd.read_csv(f.filename)
+        for i in features.columns:
+            df = features[i]
+            mean = df[df != 0].mean()
+            df[df == 0] = mean
+        loaded_model = pickle.load(open("dengue-weights.dat", "rb"))
+        y_pred = loaded_model.predict(features)
+        predictions = [round(value) for value in np.exp(y_pred)]
+        plt.plot(predictions)
+        plt.title('Prediction')
+        plt.savefig('static/Predictions.png')
+        return render_template('result.html', data=predictions)
 
 if __name__ == '__main__':
     app.secret_key='secret123'
